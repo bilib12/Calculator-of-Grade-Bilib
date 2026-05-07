@@ -30,7 +30,7 @@ input:focus {
 
 <body class="min-h-screen py-12 px-4">
 
-<div class="max-w-lg mx-auto">
+<div class="max-w-6xl mx-auto">
 
 <!-- HEADER -->
 <div class="text-center mb-8">
@@ -38,7 +38,10 @@ input:focus {
     <h1 class="text-4xl font-bold text-white">Grade Calculator</h1>
 </div>
 
-<!-- CARD -->
+<!-- SIDE BY SIDE CONTAINER -->
+<div class="grid md:grid-cols-2 gap-6">
+
+<!-- ================= LEFT: CLASS CALCULATOR ================= -->
 <div class="bg-white rounded-3xl shadow-2xl p-8 space-y-6">
 
 <!-- EXAM -->
@@ -73,15 +76,50 @@ input:focus {
 <div id="actBox" class="space-y-2"></div>
 </div>
 
-<!-- BUTTON -->
 <button onclick="calculateGrade()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl">
-Calculate Grade
+Calculate Class Grade
 </button>
 
-<!-- RESULT -->
 <div id="result" class="hidden bg-gray-50 p-6 rounded-2xl text-center mt-4">
+<p id="final" class="font-extrabold text-5xl text-indigo-700"></p>
+</div>
 
-<p id="final" class="font-extrabold text-5xl text-indigo-700 drop-shadow-lg"></p>
+</div>
+
+<!-- ================= RIGHT: SEMESTER SYSTEM ================= -->
+<div class="bg-white rounded-3xl shadow-2xl p-8 space-y-6">
+
+<h2 class="text-2xl font-bold text-purple-700">🏫 Semester System</h2>
+
+<!-- PRELIM -->
+<div>
+<label>Prelim (20%)</label>
+<input id="prelim" class="w-full border p-3 rounded-xl text-center" placeholder="Grade">
+</div>
+
+<!-- MIDTERM -->
+<div>
+<label>Midterm (20%)</label>
+<input id="midterm" class="w-full border p-3 rounded-xl text-center" placeholder="Grade">
+</div>
+
+<!-- PREFI -->
+<div>
+<label>Pre-Final (20%)</label>
+<input id="prefi" class="w-full border p-3 rounded-xl text-center" placeholder="Grade">
+</div>
+
+<!-- FINALS -->
+<div>
+<label>Finals (40%)</label>
+<input id="finals" class="w-full border p-3 rounded-xl text-center" placeholder="Grade">
+</div>
+
+<button onclick="calculateSemester()" class="w-full bg-purple-600 text-white p-4 rounded-2xl">
+Calculate Semester
+</button>
+
+<div id="semResult" class="text-center font-bold text-2xl text-purple-700"></div>
 
 </div>
 
@@ -90,7 +128,7 @@ Calculate Grade
 
 <script>
 
-// CREATE 5 INPUTS EACH
+// CREATE INPUTS
 function create(prefix, container){
     for(let i=0;i<5;i++){
         document.getElementById(container).innerHTML += `
@@ -103,7 +141,7 @@ function create(prefix, container){
 create("q","quizBox");
 create("a","actBox");
 
-// COMPUTE AVG
+// AVG
 function avg(prefix){
     let arr=[];
     for(let i=0;i<5;i++){
@@ -117,32 +155,41 @@ function avg(prefix){
     return arr.length?arr.reduce((a,b)=>a+b)/arr.length:0;
 }
 
-// MAIN
+// CLASS GRADE
 function calculateGrade(){
 
-let exam = (parseFloat(examScore.value)/parseFloat(examMax.value))*100;
-let pt = (parseFloat(ptScore.value)/parseFloat(ptMax.value))*100;
+let exam = (parseFloat(examScore.value)/parseFloat(examMax.value))*100 || 0;
+let pt = (parseFloat(ptScore.value)/parseFloat(ptMax.value))*100 || 0;
 
 let quiz = avg("q");
 let act = avg("a");
 
-// WEIGHTS
 let final =
 exam*0.50 +
 pt*0.20 +
 quiz*0.15 +
 act*0.15;
 
-// 🔥 BOLD OUTPUT ONLY (as requested)
 document.getElementById("result").classList.remove("hidden");
-document.getElementById("final").innerHTML =
-`
-<div style="font-size:1.2rem; color:#6b7280;">Final Grade</div>
-<div style="font-size:4rem; font-weight:900; color:#4f46e5;">
-${final.toFixed(2)}%
-</div>
-`;
+document.getElementById("final").innerText = final.toFixed(2) + "%";
+}
 
+// SEMESTER CALC
+function calculateSemester(){
+
+let p = parseFloat(prelim.value)||0;
+let m = parseFloat(midterm.value)||0;
+let pf = parseFloat(prefi.value)||0;
+let f = parseFloat(finals.value)||0;
+
+let sem =
+p*0.20 +
+m*0.20 +
+pf*0.20 +
+f*0.40;
+
+document.getElementById("semResult").innerText =
+"Semester Grade: " + sem.toFixed(2) + "%";
 }
 
 </script>
