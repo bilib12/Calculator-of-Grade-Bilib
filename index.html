@@ -10,185 +10,90 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        .card {
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-        }
-        input:focus, textarea:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-        }
     </style>
 </head>
 <body class="min-h-screen py-12 px-4">
     <div class="max-w-lg mx-auto">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-xl mb-4">
-                <i class="fas fa-calculator text-3xl text-indigo-600"></i>
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-3xl shadow-xl mb-6">
+                <i class="fas fa-calculator text-4xl text-indigo-600"></i>
             </div>
-            <h1 class="text-4xl font-bold text-white mb-2">Grade Calculator</h1>
-            <p class="text-indigo-100">Calculate your final grade easily</p>
+            <h1 class="text-4xl font-bold text-white">Grade Calculator</h1>
+            <p class="text-indigo-100 mt-2">Using Input Prompts</p>
         </div>
 
-        <!-- Main Card -->
-        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden card">
-            <div class="p-8">
-                <div class="space-y-6">
-                    <!-- Exam -->
-                    <div>
-                        <label class="flex items-center gap-2 text-gray-700 font-medium mb-2">
-                            <i class="fas fa-file-alt"></i>
-                            Exam Score (%)
-                        </label>
-                        <input type="text" id="exam" 
-                               class="w-full px-5 py-4 border border-gray-200 rounded-2xl text-2xl font-semibold focus:border-indigo-500"
-                               placeholder="85" maxlength="6">
-                    </div>
+        <div class="bg-white rounded-3xl shadow-2xl p-10 text-center">
+            <button onclick="startCalculation()" 
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-semibold py-5 px-12 rounded-2xl transition-all active:scale-95 shadow-lg">
+                <i class="fas fa-play mr-3"></i>
+                Start Grade Calculation
+            </button>
 
-                    <!-- Performance Task -->
-                    <div>
-                        <label class="flex items-center gap-2 text-gray-700 font-medium mb-2">
-                            <i class="fas fa-tasks"></i>
-                            Performance Task (%)
-                        </label>
-                        <input type="text" id="tp" 
-                               class="w-full px-5 py-4 border border-gray-200 rounded-2xl text-2xl font-semibold focus:border-indigo-500"
-                               placeholder="90" maxlength="6">
-                    </div>
-
-                    <!-- Quizzes -->
-                    <div>
-                        <label class="flex items-center gap-2 text-gray-700 font-medium mb-2">
-                            <i class="fas fa-list-check"></i>
-                            Quiz / Activity Scores
-                        </label>
-                        <textarea id="quiz" rows="3"
-                                  class="w-full px-5 py-4 border border-gray-200 rounded-2xl resize-none focus:border-indigo-500"
-                                  placeholder="66, 92, 80, 100, 92"></textarea>
-                        <p class="text-xs text-gray-500 mt-1">Separate scores with commas</p>
-                    </div>
-                </div>
-
-                <!-- Buttons -->
-                <div class="grid grid-cols-2 gap-4 mt-10">
-                    <button onclick="calculateGrade()"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2">
-                        <i class="fas fa-calculator"></i>
-                        Calculate Grade
-                    </button>
-                    <button onclick="clearAll()"
-                            class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2">
-                        <i class="fas fa-trash"></i>
-                        Clear
-                    </button>
-                </div>
-            </div>
-
-            <!-- Result Section -->
-            <div id="result" class="hidden border-t bg-gray-50 p-8">
-                <h3 class="text-lg font-semibold text-gray-600 mb-6 flex items-center gap-2">
-                    <i class="fas fa-chart-pie"></i> Your Results
-                </h3>
-                
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center bg-white p-5 rounded-2xl">
-                        <div>
-                            <p class="text-gray-500 text-sm">Quiz Average</p>
-                            <p id="quizAvg" class="text-4xl font-bold text-gray-800"></p>
-                        </div>
-                        <div class="text-5xl text-amber-400">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-white p-5 rounded-2xl">
-                        <div>
-                            <p class="text-gray-500 text-sm">Final Grade</p>
-                            <p id="finalGrade" class="text-5xl font-bold"></p>
-                        </div>
-                        <div id="gradeBadge" class="px-6 py-3 rounded-2xl font-bold text-lg"></div>
-                    </div>
-                </div>
-            </div>
+            <div id="result" class="hidden mt-10 text-left"></div>
         </div>
 
-        <!-- Footer Info -->
-        <div class="text-center text-white/70 text-sm mt-6">
-            Weighted: 50% Exam • 20% Performance Task • 30% Quiz and Activity
+        <div class="text-center text-white/70 text-sm mt-8">
+            50% Exam • 20% Performance Task • 30% Quizzes
         </div>
     </div>
 
     <script>
-        function calculateGrade() {
-            const exam = parseFloat(document.getElementById("exam").value) || 0;
-            const tp = parseFloat(document.getElementById("tp").value) || 0;
+        function startCalculation() {
+            // Get inputs using prompt
+            let exam = parseFloat(prompt("Enter Exam score (%)"));
+            let tp = parseFloat(prompt("Enter Performance Task score (%)"));
             
-            const quizInput = document.getElementById("quiz").value;
-            const scores = quizInput.split(",")
-                .map(s => parseFloat(s.trim()))
-                .filter(s => !isNaN(s));
+            let count = parseInt(prompt("How many quiz/activity scores?"));
 
-            if (scores.length === 0) {
-                alert("Please enter at least one quiz score.");
+            // Validation
+            if (isNaN(exam) || isNaN(tp) || isNaN(count) || count < 1) {
+                alert("Please enter valid numbers.");
                 return;
             }
 
-            const total = scores.reduce((a, b) => a + b, 0);
-            const quizAverage = total / scores.length;
-
-            const finalGrade = (exam * 0.50) + (tp * 0.20) + (quizAverage * 0.30);
-
-            // Display Results
-            document.getElementById("result").classList.remove("hidden");
-            
-            document.getElementById("quizAvg").textContent = quizAverage.toFixed(2) + "%";
-            
-            const finalEl = document.getElementById("finalGrade");
-            finalEl.textContent = finalGrade.toFixed(2) + "%";
-
-            // Grade Badge
-            const badge = document.getElementById("gradeBadge");
-            let color = "";
-            let label = "";
-
-            if (finalGrade >= 90) {
-                color = "bg-emerald-100 text-emerald-700";
-                label = "Excellent";
-            } else if (finalGrade >= 85) {
-                color = "bg-cyan-100 text-cyan-700";
-                label = "Very Good";
-            } else if (finalGrade >= 80) {
-                color = "bg-blue-100 text-blue-700";
-                label = "Good";
-            } else if (finalGrade >= 75) {
-                color = "bg-yellow-100 text-yellow-700";
-                label = "Satisfactory";
-            } else {
-                color = "bg-red-100 text-red-700";
-                label = "Needs Improvement";
+            let total = 0;
+            for(let i = 1; i <= count; i++){
+                let score = parseFloat(prompt(`Enter score ${i} (%)`));
+                if (isNaN(score)) {
+                    alert("Invalid score entered.");
+                    return;
+                }
+                total += score;
             }
 
-            badge.className = `px-6 py-3 rounded-2xl font-bold text-lg ${color}`;
-            badge.textContent = label;
-        }
+            let quizAvg = total / count;
+            let finalGrade = (exam * 0.50) + (tp * 0.20) + (quizAvg * 0.30);
 
-        function clearAll() {
-            document.getElementById("exam").value = "";
-            document.getElementById("tp").value = "";
-            document.getElementById("quiz").value = "";
-            document.getElementById("result").classList.add("hidden");
+            // Display nice result
+            const resultDiv = document.getElementById("result");
+            resultDiv.classList.remove("hidden");
+            resultDiv.innerHTML = `
+                <div class="bg-gray-50 p-6 rounded-2xl space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                        <i class="fas fa-chart-pie"></i> Calculation Result
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-lg">
+                            <span class="text-gray-600">Exam Score:</span>
+                            <span class="font-semibold">${exam.toFixed(2)}%</span>
+                        </div>
+                        <div class="flex justify-between text-lg">
+                            <span class="text-gray-600">Performance Task:</span>
+                            <span class="font-semibold">${tp.toFixed(2)}%</span>
+                        </div>
+                        <div class="flex justify-between text-lg">
+                            <span class="text-gray-600">Quiz Average:</span>
+                            <span class="font-semibold">${quizAvg.toFixed(2)}%</span>
+                        </div>
+                        <hr>
+                        <div class="flex justify-between text-2xl font-bold pt-2">
+                            <span>Final Grade:</span>
+                            <span class="text-indigo-600">${finalGrade.toFixed(2)}%</span>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
-
-        // Allow Enter key to calculate
-        document.addEventListener("keypress", function(e) {
-            if (e.key === "Enter") {
-                calculateGrade();
-            }
-        });
     </script>
 </body>
 </html>
